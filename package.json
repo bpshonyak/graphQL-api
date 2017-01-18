@@ -1,0 +1,23 @@
+{
+  "name": "graphql-api",
+  "version": "0.0.1",
+  "description": "Testing out Graph QL like a boss",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bpshonyak/graphQL-api.git"
+  },
+  "keywords": [
+    "GraphQL",
+    "Node.js"
+  ],
+  "author": "Bogdan Pshonyak",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bpshonyak/graphQL-api/issues"
+  },
+  "homepage": "https://github.com/bpshonyak/graphQL-api#readme"
+}
