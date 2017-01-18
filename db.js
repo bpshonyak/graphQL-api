@@ -1,6 +1,6 @@
-var _ = require('lodash');
-var Faker = require('faker');
-var Sequelize = require('sequelize');
+import _ from 'lodash';
+import Faker from 'faker';
+import Sequelize from 'sequelize';
 
 const conn = new Sequelize('graph_ql', 'root', 'root', {
   port: 8889,
