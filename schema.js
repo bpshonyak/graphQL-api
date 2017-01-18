@@ -1,5 +1,6 @@
 import {
   GraphQLObjectType,
+  GraphQLNonNull,
   GraphQLSchema,
   GraphQLString,
   GraphQLInt,
@@ -7,10 +8,35 @@ import {
 } from 'graphql';
 import db from './db';
 
+const Post = new GraphQLObjectType({
+  name: 'Post',
+  description: 'This represents a post.',
+  fields: {
+    id: {
+      type: GraphQLInt,
+      resolve(post) {
+        return post.id
+      }
+    },
+    title: {
+      type: GraphQLString,
+      resolve(post) {
+        return post.title
+      }
+    },
+    content: {
+      type: GraphQLString,
+      resolve(post) {
+        return post.content
+      }
+    }
+  }
+});
+
 const User = new GraphQLObjectType({
   name: 'User',
   description: 'This represents a user.',
-  fields: () => {
+  fields: {
     id: {
       type: GraphQLInt,
       resolve(user) {
@@ -34,30 +60,11 @@ const User = new GraphQLObjectType({
       resolve(user) {
         return user.email
       }
-    }
-  }
-});
-
-const Post = new GraphQLObjectType({
-  name: 'Post',
-  description: 'This represents a post.',
-  fields: () => {
-    id: {
-      type: GraphQLInt,
-      resolve(post) {
-        return post.id
-      }
     },
-    title: {
-      type: GraphQLString,
-      resolve(post) {
-        return post.title
-      }
-    },
-    content: {
-      type: GraphQLString,
-      resolve(post) {
-        return post.content
+    posts: {
+      type: new GraphQLList(Post),
+      resolve(user) {
+        return user.getPosts();
       }
     }
   }
@@ -66,28 +73,61 @@ const Post = new GraphQLObjectType({
 const Query = new GraphQLObjectType({
   name: 'Query',
   description: 'This is a root query',
-  fields: () => {
-    return {
-      users: {
-        type: new GraphQLList(User),
-        args: {
-          id: {
-            type: GraphQLInt
-          },
-          email {
-            type: GraphQLString
-          }
+  fields: {
+    users: {
+      type: new GraphQLList(User),
+      args: {
+        id: {
+          type: GraphQLInt
         },
-        resolve(root, args) {
-          return db.models.user.findAll({where: args});
+        email: {
+          type: GraphQLString
         }
+      },
+      resolve(root, args) {
+        return db.models.user.findAll({where: args});
+      }
+    },
+    posts: {
+      type: new GraphQLList(Post),
+      resolve(root, args) {
+        return db.models.post.findAll({where: args});
+      }
+    }
+  }
+});
+
+const Mutation = new GraphQLObjectType({
+  name: 'Mutations',
+  description: 'Functions to set stuff',
+  fields: {
+    addUser: {
+      type: User,
+      args: {
+        firstName: {
+          type: new GraphQLNonNull(GraphQLString)
+        },
+        lastName: {
+          type: new GraphQLNonNull(GraphQLString)
+        },
+        email: {
+          type: new GraphQLNonNull(GraphQLString)
+        }
+      },
+      resolve (source, args) {
+        return db.models.user.create({
+          firstName: args.firstName,
+          lastName: args.lastName,
+          email: args.email.toLowerCase()
+        });
       }
     }
   }
 });
 
 const Schema = new GraphQLSchema({
-  query: Query
+  query: Query,
+  mutation: Mutation
 });
 
 export default Schema;

@@ -70,3 +70,5 @@ conn.sync({force:true}).then(() => {
     });
   });
 });
+
+export default conn;
